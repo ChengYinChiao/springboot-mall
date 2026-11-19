@@ -1,5 +1,6 @@
 package com.teiyinkyou.springbootmall.rowmapper;
 
+import com.teiyinkyou.springbootmall.constant.ProductCategory;
 import com.teiyinkyou.springbootmall.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -9,19 +10,27 @@ import java.sql.SQLException;
 public class ProductRowMapper implements RowMapper<Product> {
 
     @Override
-    public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Product mapRow(ResultSet resultSet, int i) throws SQLException {
         //將取得結果rs放入Product變數裡
         Product product = new Product();
 
-        product.setProductId(rs.getInt("product_id"));
-        product.setProductName(rs.getString("product_name"));
-        product.setCategory(rs.getString("category"));
-        product.setImageUrl(rs.getString("image_url"));
-        product.setPrice(rs.getInt("price"));
-        product.setStock(rs.getInt("stock"));
-        product.setDescription(rs.getString("description"));
-        product.setCreatedDate(rs.getTimestamp("created_date"));
-        product.setLastModifiedDate(rs.getTimestamp("last_modified_date"));
+        product.setProductId(resultSet.getInt("product_id"));
+        product.setProductName(resultSet.getString("product_name"));
+
+        //String轉成Enum
+        String categoryStr = resultSet.getString("category");
+        ProductCategory category = ProductCategory.valueOf(categoryStr);
+        product.setCategory(category);
+
+        //product.setCategory(ProductCategory.valueOf(resultSet.getString("category")));
+
+
+        product.setImageUrl(resultSet.getString("image_url"));
+        product.setPrice(resultSet.getInt("price"));
+        product.setStock(resultSet.getInt("stock"));
+        product.setDescription(resultSet.getString("description"));
+        product.setCreatedDate(resultSet.getTimestamp("created_date"));
+        product.setLastModifiedDate(resultSet.getTimestamp("last_modified_date"));
 
         return product;
     }
