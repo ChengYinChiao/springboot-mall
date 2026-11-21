@@ -27,6 +27,7 @@ public class ProductController {
         }
     }
 
+    //@RequestBody:接住前端傳過來的json參數
     //一定要記得加上@Valid註解進去，不然@NotNull不會生效
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
@@ -38,5 +39,26 @@ public class ProductController {
 
         //最後回傳一個ResponseEntity給前端，返回值http狀態碼為 201 Created，表示有一筆數據被創建出來
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    }
+
+    //@PathVariable:從Path取得值
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+
+        Product product = productService.getProductById(productId);
+
+        //檢查 product 是否存在
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        //修改商品數據
+        productService.updateProduct(productId, productRequest);
+
+        //從資料庫取得更新過後的商品數據
+        Product updatedProduct = productService.getProductById(productId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
     }
 }
