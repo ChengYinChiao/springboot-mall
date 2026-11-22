@@ -1,5 +1,6 @@
 package com.teiyinkyou.springbootmall.controller;
 
+import com.teiyinkyou.springbootmall.constant.ProductCategory;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
 import com.teiyinkyou.springbootmall.service.ProductService;
@@ -19,8 +20,12 @@ public class ProductController {
 
     //實作列表類型的api，不論是否有數據，都要固定返回 200 OK 的http狀態碼給前端
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
-        List<Product> productList = productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts(
+            //required = false 為非必需參數的寫法
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search
+    ) {
+        List<Product> productList = productService.getProducts(category, search);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

@@ -1,5 +1,6 @@
 package com.teiyinkyou.springbootmall.service.impl;
 
+import com.teiyinkyou.springbootmall.constant.ProductCategory;
 import com.teiyinkyou.springbootmall.dao.ProductDao;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
@@ -16,8 +17,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        return productDao.getProducts(category, search);
     }
 
     //Service層實作只要直接去call ProductDao的getProductById

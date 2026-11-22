@@ -1,5 +1,6 @@
 package com.teiyinkyou.springbootmall.dao.impl;
 
+import com.teiyinkyou.springbootmall.constant.ProductCategory;
 import com.teiyinkyou.springbootmall.dao.ProductDao;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
@@ -24,12 +25,26 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(ProductCategory category, String search) {
         String sql = "SELECT product_id, product_name, category, image_url, " +
                 "price, stock, description, created_date, last_modified_date " +
-                "FROM product";
+                "FROM product WHERE 1=1";
+        //1=1 對查詢不會有任何影響，這個寫法是為了任意組合查詢條件
 
         Map<String, Object> map = new HashMap<>();
+
+        if (category != null) {
+            // AND前面一定要預留一個空白鍵
+            sql = sql + " AND category = :category";
+            //因為category是Enum類型，要去用name()方法轉換成字串
+            map.put("category", category.name());
+        }
+
+        if (search != null) {
+            sql = sql + " AND product_name LIKE :search";
+            //一定要把模糊查詢的%寫在map裡面，不可以寫在sql語句裡
+            map.put("search", "%" + search + "%");
+        }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
