@@ -1,6 +1,7 @@
 package com.teiyinkyou.springbootmall.controller;
 
 import com.teiyinkyou.springbootmall.constant.ProductCategory;
+import com.teiyinkyou.springbootmall.dto.ProductQueryParams;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
 import com.teiyinkyou.springbootmall.service.ProductService;
@@ -25,7 +26,12 @@ public class ProductController {
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search
     ) {
-        List<Product> productList = productService.getProducts(category, search);
+        //利用 ProductQueryParams Class做集中管理
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setProductCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

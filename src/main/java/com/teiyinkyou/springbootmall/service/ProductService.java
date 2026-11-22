@@ -1,6 +1,6 @@
 package com.teiyinkyou.springbootmall.service;
 
-import com.teiyinkyou.springbootmall.constant.ProductCategory;
+import com.teiyinkyou.springbootmall.dto.ProductQueryParams;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<Product> getProducts(ProductCategory category, String search);
+    List<Product> getProducts(ProductQueryParams productQueryParams);
 
     Product getProductById(Integer productId);
 
