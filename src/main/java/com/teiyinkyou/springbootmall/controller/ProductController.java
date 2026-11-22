@@ -22,14 +22,21 @@ public class ProductController {
     //實作列表類型的api，不論是否有數據，都要固定返回 200 OK 的http狀態碼給前端
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
-            //required = false 為非必需參數的寫法
+            //查詢條件Filtering，required = false 為非必需參數的寫法
             @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+
+            //排序Sorting，預設將最新的商品放前面(降序)
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            @RequestParam(defaultValue = "desc") String sort
     ) {
         //利用 ProductQueryParams Class做集中管理
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setProductCategory(category);
         productQueryParams.setSearch(search);
+
+        productQueryParams.setOrderBy(orderBy);
+        productQueryParams.setSort(sort);
 
         List<Product> productList = productService.getProducts(productQueryParams);
 
