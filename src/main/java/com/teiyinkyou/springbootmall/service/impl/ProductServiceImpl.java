@@ -7,11 +7,18 @@ import com.teiyinkyou.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public List<Product> getProducts() {
+        return productDao.getProducts();
+    }
 
     //Service層實作只要直接去call ProductDao的getProductById
     @Override

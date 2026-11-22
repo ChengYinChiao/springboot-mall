@@ -9,12 +9,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
+    //實作列表類型的api，不論是否有數據，都要固定返回 200 OK 的http狀態碼給前端
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+        List<Product> productList = productService.getProducts();
+
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
+
+    //查詢單個數據的api，則是有查到數據才回傳 200 OK，沒查到數據的話回傳 404 Not Found
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
         Product product = productService.getProductById(productId);
