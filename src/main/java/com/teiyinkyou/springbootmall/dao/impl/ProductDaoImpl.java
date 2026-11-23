@@ -30,18 +30,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         //查詢條件
-        if (productQueryParams.getProductCategory() != null) {
-            // AND前面一定要預留一個空白鍵
-            sql = sql + " AND category = :category";
-            //因為category是Enum類型，要去用name()方法轉換成字串
-            map.put("category", productQueryParams.getProductCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            //一定要把模糊查詢的%寫在map裡面，不可以寫在sql語句裡
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         //執行count(*)相關的sql，可以使用queryForObject()方法
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
@@ -59,18 +48,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         //查詢條件
-        if (productQueryParams.getProductCategory() != null) {
-            // AND前面一定要預留一個空白鍵
-            sql = sql + " AND category = :category";
-            //因為category是Enum類型，要去用name()方法轉換成字串
-            map.put("category", productQueryParams.getProductCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            //一定要把模糊查詢的%寫在map裡面，不可以寫在sql語句裡
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         //排序，ORDER BY 的sql語法只能用字串拼接的方式實作出來，不能用sql變數去實作
         //記得前後留空白鍵
@@ -165,4 +143,26 @@ public class ProductDaoImpl implements ProductDao {
 
         namedParameterJdbcTemplate.update(sql, map);
     }
+
+    //將重複的程式提煉成一個獨立的方法，優先使用private來限制使用範圍
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+
+        //查詢條件
+        if (productQueryParams.getProductCategory() != null) {
+            // AND前面一定要預留一個空白鍵
+            sql = sql + " AND category = :category";
+            //因為category是Enum類型，要去用name()方法轉換成字串
+            map.put("category", productQueryParams.getProductCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND product_name LIKE :search";
+            //一定要把模糊查詢的%寫在map裡面，不可以寫在sql語句裡
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        return sql;
+    }
+
+
 }
