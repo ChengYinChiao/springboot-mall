@@ -5,6 +5,7 @@ import com.teiyinkyou.springbootmall.dto.ProductQueryParams;
 import com.teiyinkyou.springbootmall.dto.ProductRequest;
 import com.teiyinkyou.springbootmall.model.Product;
 import com.teiyinkyou.springbootmall.service.ProductService;
+import com.teiyinkyou.springbootmall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,9 +24,10 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    //public ResponseEntity<List<Product>> getProducts(
     //實作列表類型的api，不論是否有數據，都要固定返回 200 OK 的http狀態碼給前端
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             //查詢條件 Filtering，required = false 為非必需參數的寫法
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -50,10 +52,20 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
-
+        //取得 product list
         List<Product> productList = productService.getProducts(productQueryParams);
 
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        //取得 product 總數
+        Integer total = productService.countProduct(productQueryParams);
+
+        //分頁
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        page.setResults(productList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
     //查詢單個數據的api，則是有查到數據才回傳 200 OK，沒查到數據的話回傳 404 Not Found
